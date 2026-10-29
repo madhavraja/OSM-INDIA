@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 1. रिपॉजिटरी कोड क्लोन करें
+      - name: 1. रिपॉजिटरी क्लोन करें
         uses: actions/checkout@v4
 
-      - name: 2. Node.js वातावरण सेटअप करें
+      - name: 2. Node.js 18 सेटअप करें
         uses: actions/setup-node@v4
         with:
           node-version: 18
@@ -21,30 +21,30 @@ jobs:
       - name: 3. Java JDK 17 सेटअप करें
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
+          distribution: 'temurin'
           java-version: '17'
 
-      - name: 4. Android SDK टूल्स सेटअप करें
+      - name: 4. Android SDK सेटअप करें
         uses: android-actions/setup-android@v3
 
       - name: 5. डिपेंडेंसी इंस्टॉल करें
+        run: npm install
+
+      - name: 6. Capacitor Android प्रोजेक्ट तैयार और सिंक करें
         run: |
-          npm install
-          npx cap add android
+          npx cap add android || true
           npx cap sync android
 
-      - name: 6. कैमरा व इंटरनेट परमिशन इंजेक्ट करें
-        run: |
-          sed -i '/<application/i <uses-permission android:name="android.permission.INTERNET" />\n<uses-permission android:name="android.permission.CAMERA" />\n<uses-permission android:name="android.permission.RECORD_AUDIO" />\n<uses-feature android:name="android.hardware.camera" android:required="false" />' android/app/src/main/AndroidManifest.xml
+      - name: 7. gradlew को चलाने की अनुमति दें
+        run: chmod +x android/gradlew
 
-      - name: 7. एंड्रॉइड APK कंपाइल करें
+      - name: 8. Debug APK बनाएं
         run: |
           cd android
-          chmod +x gradlew
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --stacktrace
 
-      - name: 8. तैयार APK को डाउनलोड हेतु अपलोड करें
+      - name: 9. APK फ़ाइल अपलोड करें
         uses: actions/upload-artifact@v4
         with:
-          name: OSM-INDIA-ESCROW-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: Escrow-Marketplace-APK
+          path: android/app/build/outputs/apk/debug/*.apk
