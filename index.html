@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>OSM INDIA | ऑनलाइन सेलिंग मार्केट</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#312e81">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Hind:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap');
+    body { font-family: 'Hind', 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+    .badge-rc { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
+    .hidden-scrollbar::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen select-none">
+
+  <!-- हेडर एवं बहुभाषी इंजन (9 भाषाएं) -->
+  <header class="bg-indigo-900 text-white sticky top-0 z-40 shadow-lg">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-2.5 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2 cursor-pointer" onclick="location.reload()">
+        <div class="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center font-extrabold text-indigo-950 text-xl shadow border-2 border-white">
+          OSM
+        </div>
+        <div>
+          <div class="text-lg sm:text-xl font-black text-amber-400 leading-tight">OSM INDIA</div>
+          <div class="text-[9px] sm:text-[10px] text-indigo-200 uppercase font-semibold" data-i18n="tagline">ऑनलाइन सेलिंग मार्केट</div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <!-- 9 भाषाएं -->
+        <select id="langSelector" onchange="changeLanguage(this.value)" class="bg-indigo-800 text-amber-300 border border-indigo-600 rounded-lg px-2 py-1 text-xs font-semibold focus:outline-none">
+          <option value="hi" selected>🇮🇳 हिंदी</option>
+          <option value="en">English</option>
+          <option value="mr">मराठी</option>
+          <option value="gu">ગુજરાતી</option>
+          <option value="bn">বাংলা</option>
+          <option value="pa">ਪੰਜਾਬੀ</option>
+          <option value="ta">தமிழ்</option>
+          <option value="te">తెలుగు</option>
+          <option value="kn">ಕನ್ನಡ</option>
+        </select>
+
+        <!-- बेचें बटन -->
+        <button onclick="openSellModal()" class="bg-amber-500 hover:bg-amber-400 text-indigo-950 font-bold px-3 py-1.5 rounded-lg text-xs shadow flex items-center gap-1">
+          <i class="fa-solid fa-plus-circle"></i>
+          <span data-i18n="sellBtn">सामान बेचें</span>
+        </button>
+
+        <!-- एडमिन बटन -->
+        <button onclick="openAdminAuth()" class="bg-indigo-950 text-indigo-200 px-2.5 py-1.5 rounded-lg text-xs border border-indigo-700">
+          <i class="fa-solid fa-shield-halved text-amber-400"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- मुख्य कंटेंट -->
+  <main class="flex-grow max-w-7xl mx-auto px-3 sm:px-6 py-4 w-full">
+    <!-- बैनर (ज़ीरो डायरेक्ट कॉन्टैक्ट गारंटी) -->
+    <div class="bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-900 text-white rounded-2xl p-4 shadow-lg border border-indigo-800 mb-4 flex flex-col md:flex-row justify-between items-center gap-3">
+      <div>
+        <span class="bg-emerald-500/20 text-emerald-300 px-2.5 py-0.5 rounded-full text-[10px] font-bold border border-emerald-500/40">100% सुरक्षित ज़ीरो कॉन्टैक्ट सुरक्षा</span>
+        <h2 class="text-base sm:text-xl font-black text-amber-400 mt-1" data-i18n="bannerTitle">सुरक्षित सौदा, डायरेक्ट डोरस्टेप डिलीवरी</h2>
+        <p class="text-xs text-slate-300 mt-0.5 max-w-xl" data-i18n="bannerDesc">क्रेता-विक्रेता में कोई सीधा संपर्क नहीं। कूरियर पिकअप व डोरस्टेप डिलीवरी सिर्फ OSM India डेस्क द्वारा प्रबंधित।</p>
+      </div>
+      <div class="flex gap-2">
+        <span class="bg-white/10 px-3 py-1.5 rounded-lg text-xs font-bold text-amber-300 border border-white/10">✓ RC Verified</span>
+        <span class="bg-white/10 px-3 py-1.5 rounded-lg text-xs font-bold text-emerald-300 border border-white/10">Zero Contact</span>
+      </div>
+    </div>
+
+    <!-- श्रेणियां -->
+    <div class="flex items-center gap-2 overflow-x-auto pb-3 hidden-scrollbar text-xs">
+      <button onclick="filterCategory('all')" class="cat-pill active px-3.5 py-1.5 rounded-full bg-indigo-900 text-white whitespace-nowrap font-semibold">सभी सामान</button>
+      <button onclick="filterCategory('वाहन')" class="cat-pill px-3.5 py-1.5 rounded-full bg-white border text-slate-700 whitespace-nowrap font-semibold">🚗 वाहन (Vehicles)</button>
+      <button onclick="filterCategory('मोबाइल')" class="cat-pill px-3.5 py-1.5 rounded-full bg-white border text-slate-700 whitespace-nowrap font-semibold">📱 मोबाइल व गैजेट्स</button>
+      <button onclick="filterCategory('प्रॉपर्टी')" class="cat-pill px-3.5 py-1.5 rounded-full bg-white border text-slate-700 whitespace-nowrap font-semibold">🏠 प्रॉपर्टी व ज़मीन</button>
+    </div>
+
+    <!-- उत्पाद ग्रिड -->
+    <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-2"></div>
+  </main>
+
+  <!-- सेलर लिस्टिंग मॉडल (WebRTC रियर कैमरा, वीडियो, पिनकोड API) -->
+  <div id="sellerModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden">
+    <div class="bg-white rounded-2xl max-w-xl w-full max-h-[92vh] overflow-y-auto shadow-2xl">
+      <div class="bg-indigo-900 text-white p-3.5 flex justify-between items-center sticky top-0 z-10">
+        <h3 class="font-bold text-sm text-amber-400">सामान बेचें (सेलर लिस्टिंग)</h3>
+        <button onclick="closeSellModal()" class="text-xl">&times;</button>
+      </div>
+      <form id="sellerForm" onsubmit="handleProductSubmit(event)" class="p-4 space-y-3 text-xs">
+        <div>
+          <label class="block font-semibold mb-1">श्रेणी चुनें *</label>
+          <select id="prodCategory" onchange="toggleVehicleFields(this.value)" required class="w-full border rounded-lg p-2 bg-slate-50">
+            <option value="">-- श्रेणी --</option>
+            <option value="वाहन">वाहन (Vehicles - कार/बाइक)</option>
+            <option value="मोबाइल">मोबाइल एवं इलेक्ट्रॉनिक्स</option>
+            <option value="प्रॉपर्टी">प्रॉपर्टी व ज़मीन</option>
+            <option value="घरेलू">घरेलू सामान</option>
+          </select>
+        </div>
+
+        <div id="vehicleLegalSection" class="p-3 bg-amber-50 rounded-xl border border-amber-300 space-y-2 hidden">
+          <span class="font-bold text-amber-900 block">⚠️ वाहन लीगल वेरिफिकेशन (RC अनिवार्य)</span>
+          <input type="text" id="vehRegNo" placeholder="गाड़ी रजिस्ट्रेशन नंबर (उदा. MP04AB1234)" class="w-full border rounded p-2 uppercase font-mono">
+          <input type="file" id="vehRcFile" accept="image/*" class="w-full border bg-white rounded p-1 text-[11px]">
+        </div>
+
+        <div>
+          <label class="block font-semibold mb-1">उत्पाद का नाम *</label>
+          <input type="text" id="prodTitle" required placeholder="उदा. Hero Splendor 2022" class="w-full border rounded-lg p-2">
+        </div>
+
+        <div>
+          <label class="block font-semibold mb-1">विक्रय मूल्य (₹) *</label>
+          <input type="number" id="prodPrice" required min="100" placeholder="मूल्य दर्ज करें" class="w-full border rounded-lg p-2 font-bold text-slate-800">
+        </div>
+
+        <!-- रियर कैमरा व वीडियो -->
+        <div class="p-3 bg-slate-100 rounded-xl border space-y-2">
+          <span class="font-bold block text-slate-700">📸 लाइव रियर कैमरा व 30s वीडियो कैप्चर</span>
+          <div class="flex gap-2">
+            <button type="button" onclick="startCamera()" class="bg-indigo-700 text-white px-2.5 py-1.5 rounded text-[11px]">कैमरा चालू करें</button>
+            <button type="button" onclick="capturePhoto()" id="btnSnapPhoto" class="bg-emerald-600 text-white px-2.5 py-1.5 rounded text-[11px]" disabled>फोटो खींचें</button>
+            <button type="button" onclick="stopCamera()" class="bg-slate-600 text-white px-2.5 py-1.5 rounded text-[11px]">बंद करें</button>
+          </div>
+          <div class="grid grid-cols-2 gap-2 mt-2">
+            <video id="liveVideoPreview" autoplay playsinline muted class="w-full h-28 bg-black rounded object-cover"></video>
+            <img id="capturedImage" class="w-full h-28 bg-slate-200 rounded object-cover hidden">
+            <canvas id="photoCanvas" class="hidden"></canvas>
+          </div>
+        </div>
+
+        <!-- 6-अंकीय पिनकोड लुकअप -->
+        <div class="p-3 bg-indigo-50/70 rounded-xl border border-indigo-200 space-y-2">
+          <span class="font-bold block text-indigo-900">📍 पिनकोड से प्रशासनिक डेटा लुकअप</span>
+          <div class="grid grid-cols-2 gap-2">
+            <input type="text" id="sellerPincode" maxlength="6" oninput="lookupPincode(this.value)" placeholder="6-अंकीय पिनकोड" required class="border rounded p-2 font-bold font-mono">
+            <input type="text" id="sellerState" readonly placeholder="राज्य (ऑटो)" class="border rounded p-2 bg-slate-200">
+          </div>
+          <input type="text" id="sellerDistrict" readonly placeholder="ज़िला / संभाग (ऑटो-लोड)" class="w-full border rounded p-2 bg-slate-200">
+          <select id="sellerTehsil" class="w-full border rounded p-2 bg-white">
+            <option value="">-- तहसील/पोस्ट ऑफिस चुनें --</option>
+          </select>
+        </div>
+
+        <!-- विक्रेता की गुप्त जानकारी (ज़ीरो कॉन्टैक्ट) -->
+        <div class="p-2.5 bg-rose-50 border border-rose-200 rounded text-rose-900 space-y-1">
+          <span class="font-bold block text-[11px]">🛡️ ज़ीरो कॉन्टैक्ट: यह जानकारी खरीदार को कभी नहीं दिखेगी</span>
+          <input type="tel" id="sellerSecretPhone" required placeholder="विक्रेता गुप्त मोबाइल (केवल OSM एडमिन हेतु)" class="w-full border rounded p-1.5 text-xs bg-white">
+        </div>
+
+        <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl shadow">उत्पाद प्रकाशित करें</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- बायर बुकिंग टोकन (5% हिडन टोकन) -->
+  <div id="bookingModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-3 hidden">
+    <div class="bg-white rounded-2xl max-w-sm w-full p-4 space-y-3 text-xs">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h4 class="font-bold text-sm text-indigo-950">सुरक्षित ऑर्डर बुकिंग</h4>
+        <button onclick="closeBookingModal()" class="text-lg">&times;</button>
+      </div>
+      <div id="bookingProductSummary" class="bg-slate-100 p-2.5 rounded-lg"></div>
+      <div class="flex justify-between font-bold">
+        <span>बुकिंग टोकन (5% एस्क्रो):</span>
+        <span id="bookingTokenAmt" class="text-indigo-700 font-black">₹0</span>
+      </div>
+      <p class="text-[10px] text-slate-500">डिलीवरी व सामान जांच के बाद ही शेष राशि कूरियर को दी जाएगी। विक्रेता से कोई सीधा संपर्क नहीं होगा।</p>
+      <button onclick="confirmOrderBooking()" class="w-full bg-indigo-900 text-amber-400 font-bold py-2.5 rounded-xl">टोकन भुगतान करें व ऑर्डर लॉक करें</button>
+    </div>
+  </div>
+
+  <!-- एडमिन 2FA पोर्टल एवं वॉलेट डैशबोर्ड -->
+  <div id="adminModal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-3 hidden">
+    <div class="bg-slate-900 text-white rounded-2xl max-w-lg w-full p-5 text-xs border border-indigo-700 max-h-[90vh] overflow-y-auto">
+      
+      <!-- लॉगिन व्यू -->
+      <div id="adminLoginView" class="space-y-3">
+        <div class="flex justify-between items-center border-b border-slate-700 pb-2">
+          <h3 class="font-bold text-amber-400 text-sm">OSM India एडमिन 2FA लॉगिन</h3>
+          <button onclick="closeAdminAuth()" class="text-lg">&times;</button>
+        </div>
+        <input type="text" id="adminUserInput" placeholder="madhavraja / ईमेल" class="w-full bg-slate-800 border border-slate-700 rounded p-2">
+        <input type="password" id="adminPassInput" placeholder="पासवर्ड (Admin@2026)" class="w-full bg-slate-800 border border-slate-700 rounded p-2">
+        <div class="p-2.5 bg-slate-800 rounded border border-indigo-500/50 space-y-1.5">
+          <span class="text-amber-300 font-bold block text-[11px]">2FA कोड (अधिकृत: +91 9691575126)</span>
+          <div class="flex gap-2">
+            <input type="text" id="adminOtpInput" placeholder="OTP (डिफ़ॉल्ट: 915751)" class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-center font-mono">
+            <button type="button" onclick="document.getElementById('adminOtpInput').value='915751'; alert('OTP 915751 भेजा गया!');" class="bg-indigo-700 px-3 rounded text-[11px]">OTP लें</button>
+          </div>
+        </div>
+        <button onclick="handleAdminLogin()" class="w-full bg-amber-500 text-indigo-950 font-black py-2 rounded-lg">सुरक्षित पोर्टल खोलें</button>
+      </div>
+
+      <!-- डैशबोर्ड व्यू (वॉलेट) -->
+      <div id="adminDashboardView" class="space-y-4 hidden">
+        <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+          <span class="text-amber-400 font-bold text-sm">एडमिन डेस्क (madhavraja)</span>
+          <button onclick="adminLogout()" class="text-rose-400">लॉगआउट</button>
+        </div>
+        <div class="bg-gradient-to-br from-indigo-950 to-black p-4 rounded-xl border border-amber-500/30">
+          <span class="text-slate-400 block text-[10px]">संचित 10% रेवेन्यू वॉलेट (5% लिस्टिंग + 5% टोकन)</span>
+          <div class="text-2xl font-black text-amber-400 mt-1" id="adminWalletBalance">₹8,450.00</div>
+          <div class="mt-3 pt-2 border-t border-slate-800 space-y-2">
+            <input type="text" id="adminUpi" value="9691575126@upi" readonly class="w-full bg-slate-900 border border-slate-700 rounded p-1.5 text-amber-300 font-mono text-[11px]">
+            <button onclick="payoutWallet()" class="w-full bg-emerald-600 text-white font-bold py-1.5 rounded">UPI (9691575126@upi) में तुरंत ट्रांसफर करें</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WhatsApp (9691575126) व AI चैटबॉट फ्लोटिंग -->
+  <div class="fixed bottom-4 right-4 z-40 flex flex-col items-end gap-2">
+    <a href="https://wa.me/919691575126?text=नमस्ते%20OSM%20India!" target="_blank" class="w-11 h-11 bg-emerald-500 rounded-full flex items-center justify-center text-white shadow-xl text-xl border-2 border-white">
+      <i class="fa-brands fa-whatsapp"></i>
+    </a>
+    <button onclick="toggleAiChatbot()" class="bg-indigo-800 text-amber-400 px-3 py-2 rounded-full shadow-xl flex items-center gap-1.5 text-xs font-bold border border-amber-400">
+      <i class="fa-solid fa-robot"></i> <span>24x7 AI</span>
+    </button>
+  </div>
+
+  <!-- AI चैट बॉक्स -->
+  <div id="aiChatModal" class="fixed bottom-16 right-4 w-72 sm:w-80 bg-white rounded-2xl shadow-2xl border z-50 overflow-hidden hidden text-xs flex flex-col">
+    <div class="bg-indigo-900 text-white p-2.5 flex justify-between items-center">
+      <span class="font-bold">OSM 24x7 AI सहायक</span>
+      <button onclick="toggleAiChatbot()">&times;</button>
+    </div>
+    <div id="chatMessages" class="p-3 h-48 overflow-y-auto space-y-2 bg-slate-50">
+      <div class="bg-indigo-100 text-indigo-950 p-2 rounded-lg">नमस्ते! मैं OSM India AI सहायक हूँ। RC नियम, डिलीवरी या ज़ीरो कॉन्टैक्ट के बारे में पूछें।</div>
+    </div>
+    <div class="p-2 border-t flex gap-1">
+      <input type="text" id="aiInput" placeholder="सवाल लिखें..." class="flex-grow border rounded p-1.5">
+      <button onclick="sendAiMsg()" class="bg-indigo-700 text-white px-2.5 rounded font-bold">भेजें</button>
+    </div>
+  </div>
+
+  <!-- कोर जावास्क्रिप्ट कंट्रोलर -->
+  <script>
+    // सर्विस वर्कर रजिस्टर करें (PWA / APK बेस)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(err => console.log('SW error:', err));
+    }
+
+    const STATE = {
+      lang: 'hi',
+      wallet: 8450.00,
+      stream: null,
+      products: [
+        { id: 'OSM-1', category: 'वाहन', title: 'Royal Enfield Classic 350', price: 140000, regNo: 'MP 04 ZB 9876', isRc: true, district: 'Bhopal', pincode: '462001', img: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=500&q=80' },
+        { id: 'OSM-2', category: 'मोबाइल', title: 'iPhone 14 (128GB Blue)', price: 54000, regNo: null, isRc: false, district: 'Indore', pincode: '452001', img: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=500&q=80' }
+      ]
+    };
+
+    const I18N = {
+      hi: { tagline: "ऑनलाइन सेलिंग मार्केट", sellBtn: "सामान बेचें", bannerTitle: "सुरक्षित सौदा, डायरेक्ट डोरस्टेप डिलीवरी" },
+      en: { tagline: "Online Selling Market", sellBtn: "Sell Item", bannerTitle: "Secure Deals, Direct Doorstep Delivery" },
+      mr: { tagline: "ऑनलाइन सेलिंग मार्केट", sellBtn: "वस्तू विका", bannerTitle: "सुरक्षित व्यवहार, थेट डोअरस्टेप डिलिव्हरी" },
+      gu: { tagline: "ઓનલાઇન સેલિંગ માર્કેટ", sellBtn: "સામાન વેચો", bannerTitle: "સુરક્ષિત સોદો, સીધી ડિલિવરી" },
+      bn: { tagline: "অনলাইন সেলিং মার্কেট", sellBtn: "বিক্রি করুন", bannerTitle: "নিরাপদ লেনদেন, ডোরস্টেপ ডেলিভারি" },
+      pa: { tagline: "ਔਨਲਾਈਨ ਸੇਲਿੰਗ ਮਾਰਕੀਟ", sellBtn: "ਵੇਚੋ", bannerTitle: "ਸੁਰੱਖਿਅਤ ਸੌਦਾ, ਡੋਰਸਟੈਪ ਡਿਲੀਵਰੀ" },
+      ta: { tagline: "ஆன்லைன் சந்தை", sellBtn: "விற்கவும்", bannerTitle: "பாதுகாப்பான நேரடி டெலிவரி" },
+      te: { tagline: "ఆన్‌లైన్ మార్కెట్", sellBtn: "అమ్మండి", bannerTitle: "సురక్షిత డోర్‌స్టెప్ డెలివరీ" },
+      kn: { tagline: "ಆನ್‌ಲೈನ್ ಮಾರುಕಟ್ಟೆ", sellBtn: "ಮಾರಾಟ ಮಾಡಿ", bannerTitle: "ಸುರಕ್ಷಿತ ಮನೆಬಾಗಿಲಿಗೆ ವಿತರಣೆ" }
+    };
+
+    function changeLanguage(lang) {
+      STATE.lang = lang;
+      const dict = I18N[lang] || I18N.hi;
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const k = el.getAttribute('data-i18n');
+        if (dict[k]) el.textContent = dict[k];
+      });
+      renderProducts();
+    }
+
+    function renderProducts(cat = 'all') {
+      const grid = document.getElementById('productGrid');
+      const list = cat === 'all' ? STATE.products : STATE.products.filter(p => p.category === cat);
+      grid.innerHTML = list.map(p => `
+        <div class="bg-white rounded-xl overflow-hidden border shadow-sm flex flex-col justify-between">
+          <div class="relative aspect-video bg-black">
+            <img src="${p.img}" class="w-full h-full object-cover">
+            ${p.isRc ? `<span class="absolute top-2 left-2 badge-rc text-white text-[10px] font-bold px-2 py-0.5 rounded-full">✓ RC सत्यापित</span>` : ''}
+          </div>
+          <div class="p-3 space-y-2">
+            <div>
+              <span class="text-[10px] text-slate-500 font-semibold">${p.category} • ${p.district} (${p.pincode})</span>
+              <h4 class="font-bold text-slate-900 text-xs">${p.title}</h4>
+              ${p.regNo ? `<span class="text-[10px] font-mono font-bold text-emerald-700">RC: ${p.regNo}</span>` : ''}
+            </div>
+            <div class="flex items-center justify-between pt-1 border-t">
+              <span class="text-base font-black text-slate-900">₹${p.price.toLocaleString('en-IN')}</span>
+              <button onclick="openBookingModal('${p.id}')" class="bg-indigo-900 hover:bg-amber-500 text-white hover:text-indigo-950 font-bold px-3 py-1.5 rounded-lg text-xs">सुरक्षित बुक करें</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function lookupPincode(pin) {
+      if (pin.length !== 6) return;
+      try {
+        const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
+        const data = await res.json();
+        if (data && data[0]?.Status === 'Success') {
+          const po = data[0].PostOffice[0];
+          document.getElementById('sellerState').value = po.State;
+          document.getElementById('sellerDistrict').value = po.District;
+          document.getElementById('sellerTehsil').innerHTML = data[0].PostOffice.map(o => `<option value="${o.Name}">${o.Name}</option>`).join('');
+        }
+      } catch (e) { console.error(e); }
+    }
+
+    async function startCamera() {
+      try {
+        STATE.stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        document.getElementById('liveVideoPreview').srcObject = STATE.stream;
+        document.getElementById('btnSnapPhoto').disabled = false;
+      } catch (err) { alert('कैमरा अनुमति दें: ' + err.message); }
+    }
+
+    function capturePhoto() {
+      const v = document.getElementById('liveVideoPreview');
+      const c = document.getElementById('photoCanvas');
+      c.width = v.videoWidth || 320;
+      c.height = v.videoHeight || 240;
+      c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
+      const data = c.toDataURL('image/jpeg');
+      const img = document.getElementById('capturedImage');
+      img.src = data;
+      img.classList.remove('hidden');
+    }
+
+    function stopCamera() {
+      if (STATE.stream) { STATE.stream.getTracks().forEach(t => t.stop()); }
+    }
+
+    function toggleVehicleFields(v) {
+      document.getElementById('vehicleLegalSection').classList.toggle('hidden', v !== 'वाहन');
+    }
+
+    function handleProductSubmit(e) {
+      e.preventDefault();
+      const p = parseFloat(document.getElementById('prodPrice').value);
+      STATE.wallet += (p * 0.05); // गुप्त 5% लिस्टिंग रेवेन्यू
+      STATE.products.unshift({
+        id: 'OSM-' + Date.now().toString().slice(-4),
+        category: document.getElementById('prodCategory').value,
+        title: document.getElementById('prodTitle').value,
+        price: p,
+        regNo: document.getElementById('vehRegNo').value || null,
+        isRc: document.getElementById('prodCategory').value === 'वाहन',
+        district: document.getElementById('sellerDistrict').value || 'India',
+        pincode: document.getElementById('sellerPincode').value || '462001',
+        img: document.getElementById('capturedImage').src || 'https://images.unsplash.com/photo-1526778548025-fa2f459cd5c1?w=500&q=80'
+      });
+      renderProducts();
+      closeSellModal();
+      stopCamera();
+      alert('उत्पाद सफलतापूर्वक लिस्ट हुआ! 5% लिस्टिंग रेवेन्यू बैकएंड में सुरक्षित प्रोसेस हुआ।');
+    }
+
+    function openBookingModal(id) {
+      const prod = STATE.products.find(x => x.id === id);
+      document.getElementById('bookingProductSummary').innerHTML = `<b>${prod.title}</b><br>मूल्य: ₹${prod.price}`;
+      document.getElementById('bookingTokenAmt').textContent = `₹${(prod.price * 0.05).toLocaleString('en-IN')}`;
+      document.getElementById('bookingModal').classList.remove('hidden');
+    }
+    function closeBookingModal() { document.getElementById('bookingModal').classList.add('hidden'); }
+    function confirmOrderBooking() {
+      STATE.wallet += 500; // 5% टोकन रेवेन्यू
+      closeBookingModal();
+      alert('ऑर्डर बुक हुआ! ज़ीरो कॉन्टैक्ट प्राइवेसी के तहत OSM इंडिया डेस्क सीधे आपसे डिलीवरी समन्वय करेगा।');
+    }
+
+    function openSellModal() { document.getElementById('sellerModal').classList.remove('hidden'); }
+    function closeSellModal() { document.getElementById('sellerModal').classList.add('hidden'); }
+    function openAdminAuth() { document.getElementById('adminModal').classList.remove('hidden'); }
+    function closeAdminAuth() { document.getElementById('adminModal').classList.add('hidden'); }
+
+    function handleAdminLogin() {
+      const u = document.getElementById('adminUserInput').value;
+      const p = document.getElementById('adminPassInput').value;
+      const o = document.getElementById('adminOtpInput').value;
+      if ((u === 'madhavraja' || u === 'madhavraja6685@gmail.com') && p === 'Admin@2026' && o === '915751') {
+        document.getElementById('adminLoginView').classList.add('hidden');
+        document.getElementById('adminDashboardView').classList.remove('hidden');
+        document.getElementById('adminWalletBalance').textContent = `₹${STATE.wallet.toFixed(2)}`;
+      } else { alert('अमान्य एडमिन क्रेडेंशियल्स!'); }
+    }
+
+    function payoutWallet() {
+      alert(`₹${STATE.wallet.toFixed(2)} सीधे UPI: 9691575126@upi पर तुरंत ट्रांसफ़र कर दिए गए हैं।`);
+      STATE.wallet = 0;
+      document.getElementById('adminWalletBalance').textContent = `₹0.00`;
+    }
+
+    function adminLogout() {
+      document.getElementById('adminDashboardView').classList.add('hidden');
+      document.getElementById('adminLoginView').classList.remove('hidden');
+    }
+
+    function toggleAiChatbot() { document.getElementById('aiChatModal').classList.toggle('hidden'); }
+    function sendAiMsg() {
+      const inp = document.getElementById('aiInput');
+      if (!inp.value.trim()) return;
+      const c = document.getElementById('chatMessages');
+      c.innerHTML += `<div class="bg-indigo-900 text-white p-2 rounded-lg ml-auto max-w-[80%]">${inp.value}</div>`;
+      setTimeout(() => {
+        c.innerHTML += `<div class="bg-indigo-100 text-indigo-950 p-2 rounded-lg max-w-[80%]">OSM नियम: सभी वाहनों का RC सत्यापन अनिवार्य है और क्रेता-विक्रेता में ज़ीरो कॉन्टैक्ट रहता है। अधिक जानकारी हेतु WhatsApp 9691575126 पर संपर्क करें।</div>`;
+        c.scrollTop = c.scrollHeight;
+      }, 400);
+      inp.value = '';
+    }
+
+    renderProducts();
+  </script>
+</body>
+</html>
