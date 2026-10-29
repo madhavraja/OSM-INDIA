@@ -1,8 +1,8 @@
-name: Build Escrow Marketplace APK
+name: Build Android APK
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
@@ -10,41 +10,38 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 1. रिपॉजिटरी क्लोन करें
+      - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: 2. Node.js 18 सेटअप करें
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      - name: 3. Java JDK 17 सेटअप करें
+      - name: Setup Java JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: 'zulu'
           java-version: '17'
 
-      - name: 4. Android SDK सेटअप करें
-        uses: android-actions/setup-android@v3
+      - name: Install Dependencies
+        run: |
+          npm install
+          npm install @capacitor/core @capacitor/cli @capacitor/android
 
-      - name: 5. डिपेंडेंसी इंस्टॉल करें
-        run: npm install
-
-      - name: 6. Capacitor Android प्रोजेक्ट तैयार और सिंक करें
+      - name: Add Android Platform & Sync
         run: |
           npx cap add android || true
           npx cap sync android
 
-      - name: 7. gradlew को चलाने की अनुमति दें
-        run: chmod +x android/gradlew
-
-      - name: 8. Debug APK बनाएं
+      - name: Build Debug APK
         run: |
           cd android
+          chmod +x gradlew
           ./gradlew assembleDebug --stacktrace
 
-      - name: 9. APK फ़ाइल अपलोड करें
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Escrow-Marketplace-APK
-          path: android/app/build/outputs/apk/debug/*.apk
+          name: app-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
