@@ -1,0 +1,14 @@
+{
+  "name": "osm-india",
+  "version": "1.0.0",
+  "description": "OSM India Escrow Marketplace",
+  "main": "index.html",
+  "scripts": {
+    "build": "echo 'No compile step needed for static web'"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.0.0",
+    "@capacitor/cli": "^6.0.0",
+    "@capacitor/core": "^6.0.0"
+  }
+}
