@@ -1,0 +1,9 @@
+{
+  "appId": "com.osmindia.app",
+  "appName": "OSM India",
+  "webDir": ".",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  }
+}
