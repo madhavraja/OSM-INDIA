@@ -1,6 +1,6 @@
 {
   "appId": "com.osmindia.app",
   "appName": "OSM INDIA",
-  "webDir": ".",
+  "webDir": "www",
   "bundledWebRuntime": false
 }
